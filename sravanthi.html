@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Happy Birthday Sravanthi - Anime Love Story</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto+Slab&display=swap" rel="stylesheet" />
+
+<style>
+  body {
+    margin: 0;
+    padding: 40px 20px 60px;
+    background: linear-gradient(135deg, #ffe6f0, #ffb3cc);
+    font-family: 'Roboto Slab', serif;
+    color: #4a0a2a;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    position: relative;
+  }
+
+  h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: 3.8rem;
+    margin-bottom: 5px;
+    color: #e91e63;
+    text-shadow: 0 0 10px #ff80ab;
+    user-select: text;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 40px;
+    color: #ad1457;
+    user-select: text;
+  }
+
+  /* Play Music Button top-right */
+  #music-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background: #e91e63;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(233, 30, 99, 0.6);
+    z-index: 1000;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  #music-toggle:hover {
+    background-color: #d81b60;
+  }
+
+  #music-anim {
+    display: inline-block;
+    margin-left: 15px;
+    vertical-align: middle;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  #content-wrapper {
+    display: flex;
+    max-width: 1200px;
+    width: 95vw;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    user-select: text;
+    flex-wrap: wrap;
+  }
+
+  /* Episode buttons container */
+  #episode-buttons {
+    max-width: 100%;
+    display: flex;
+    gap: 16px;
+    max-height: 90px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #episode-buttons button {
+    position: relative;
+    background: #f48fb1;
+    border: none;
+    color: #6a004f;
+    padding: 10px 14px 30px;
+    font-size: 0.85rem;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(233, 30, 99, 0.4);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+    user-select: none;
+    line-height: 1.2;
+    font-weight: 600;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+  #episode-buttons button:hover:not(:disabled) {
+    background: #e91e63;
+    color: white;
+  }
+  #episode-buttons button:disabled {
+    background: #ffd6e8;
+    color: #aa7a8d;
+    cursor: default;
+  }
+
+  #episode-buttons button.selected {
+    background: #e91e63;
+    color: white;
+    font-weight: 700;
+  }
+
+  /* Release date under button text */
+  #episode-buttons button .release-date {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    color: #7a405b;
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  /* Story and image container */
+  #story-image-container {
+    flex: 1 1 100%;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 300px;
+  }
+
+  #story-box {
+    flex: 1 1 60%;
+    background: rgba(255 255 255 / 0.9);
+    border-radius: 28px;
+    padding: 30px 35px;
+    box-shadow:
+      0 6px 25px rgba(233, 30, 99, 0.3),
+      inset 0 0 40px 6px #ffb3cc;
+    font-size: 1.15rem;
+    line-height: 1.5;
+    color: #6a004f;
+    min-height: 400px;
+    max-height: 480px;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+    box-sizing: border-box;
+    word-break: break-word;
+  }
+
+  #story-box.locked {
+    color: #aa7a8d;
+    user-select: none;
+    font-style: italic;
+  }
+
+  .unlock-animation {
+    animation: pulseGlow 1.6s ease-in-out 2;
+  }
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow:
+        0 0 15px 4px #ff4081,
+        0 0 30px 10px #f48fb1;
+    }
+    50% {
+      box-shadow:
+        0 0 30px 8px #ff4081,
+        0 0 50px 15px #f48fb1;
+    }
+  }
+
+  #unlock-info {
+    font-size: 1rem;
+    color: #ad1457;
+    font-style: italic;
+    margin-top: 14px;
+    min-height: 1.2em;
+  }
+
+  #countdown-timer {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #880e4f;
+    margin-top: 20px;
+    text-align: center;
+    min-height: 1.4em;
+    user-select: none;
+  }
+
+  #nav-buttons {
+    margin-top: 30px;
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+  }
+  #nav-buttons button {
+    background: #e91e63;
+    border: none;
+    color: white;
+    padding: 14px 32px;
+    font-size: 1.15rem;
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(233, 30, 99, 0.7);
+    transition: background-color 0.3s ease;
+  }
+  #nav-buttons button:disabled {
+    background: #f48fb1;
+    cursor: default;
+    box-shadow: none;
+  }
+  #nav-buttons button:hover:not(:disabled) {
+    background: #d81b60;
+  }
+
+  #image-container {
+    flex: 1 1 35%;
+    background: #fff0f5;
+    border-radius: 30px;
+    padding: 15px;
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    max-height: 480px;
+    overflow: hidden;
+  }
+  #image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 28px;
+    box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+    user-select: none;
+    object-fit: contain;
+  }
+
+  @media (max-width: 1100px) {
+    #content-wrapper {
+      flex-direction: column;
+      align-items: center;
+    }
+    #episode-buttons {
+      max-height: 90px;
+      margin-bottom: 30px;
+      gap: 12px;
+      padding-bottom: 12px;
+      width: 95vw;
+    }
+    #episode-buttons button {
+      min-width: 70px;
+      font-size: 0.75rem;
+      padding-bottom: 26px;
+    }
+    #story-image-container {
+      flex-direction: column;
+      gap: 30px;
+      width: 90vw;
+    }
+    #story-box, #image-container {
+      width: 100%;
+      flex: none;
+      max-height: 350px;
+      min-height: 350px;
+    }
+  }
+
+  /* Floating hearts animation */
+  .heart {
+    position: fixed;
+    bottom: -50px;
+    width: 22px;
+    height: 22px;
+    background: #ff4081;
+    transform: rotate(45deg);
+    animation: floatUp linear forwards;
+    opacity: 0.7;
+    border-radius: 5px 5px 0 0;
+    z-index: 5;
+  }
+  .heart::before,
+  .heart::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: #ff4081;
+    border-radius: 50%;
+  }
+  .heart::before {
+    top: -11px;
+    left: 0;
+  }
+  .heart::after {
+    left: 11px;
+    top: 0;
+  }
+
+  @keyframes floatUp {
+    0% {
+      transform: translateY(0) rotate(45deg);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(-120vh) rotate(45deg);
+      opacity: 0;
+    }
+  }
+
+  /* Pulse animation for music heart */
+  @keyframes pulseHeart {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.7;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Happy Birthday Sravanthi</h1>
+<p class="subtitle">A sweet anime love story just for you</p>
+
+<!-- Play Music Button top right -->
+<button id="music-toggle" aria-label="Play birthday music">
+  ▶️ Play Music
+  <span id="music-anim" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-left:8px; opacity:0; transition:opacity 0.3s;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#e91e63" xmlns="http://www.w3.org/2000/svg" style="animation: pulseHeart 1.5s infinite;">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 
+        4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 
+        3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+  </span>
+</button>
+
+<div id="content-wrapper">
+
+  <!-- Episode buttons -->
+  <nav id="episode-buttons" aria-label="Episode navigation">
+    <!-- Buttons inserted dynamically -->
+  </nav>
+
+  <!-- Story and Image -->
+  <section id="story-image-container" role="main" aria-live="polite" aria-atomic="true">
+    <article id="story-box" class="locked" tabindex="0">
+      <p id="story-text">Loading story...</p>
+      <div id="unlock-info"></div>
+      <div id="countdown-timer"></div>
+
+      <div id="nav-buttons" aria-label="Navigation buttons">
+        <button id="prev-btn" disabled aria-label="Previous image">&larr; Previous Image</button>
+        <button id="next-btn" disabled aria-label="Next image">Next Image &rarr;</button>
+      </div>
+    </article>
+
+    <aside id="image-container" aria-label="Story illustration">
+      <img id="story-image" src="" alt="Story illustration" />
+    </aside>
+  </section>
+
+</div>
+
+<!-- Hidden SoundCloud iframe for music -->
+<iframe
+  id="soundcloud-player"
+  style="display:none;"
+  scrolling="no"
+  allow="autoplay"
+  src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/mutesong/max-richter-on-the-nature-of-daylight&amp;color=%230066cc&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"
+></iframe>
+
+<script>
+  // Episode date range from Jan 22, 2026 to Mar 13, 2026 (51 days)
+  const startDate = new Date(2026, 0, 22);
+  const endDate = new Date(2026, 2, 13);
+  const birthdayDate = new Date(2026, 0, 22);
+
+  // Generate all dates between start and end inclusive
+  function getDatesArray(start, end) {
+    const arr = [];
+    let dt = new Date(start);
+    while (dt <= end) {
+      arr.push(new Date(dt));
+      dt.setDate(dt.getDate() + 1);
+    }
+    return arr;
+  }
+  const episodeDates = getDatesArray(startDate, endDate);
+
+  // For demo: episode 1 has full story, others have placeholder text
+  const episodes = episodeDates.map((date, i) => {
+    if(i === 0) {
+      return {
+        text: `Long before Victoria learned how to speak, laugh, or dream, she was already loved. Her parents had waited years for her, a kind of waiting that taught patience, softened voices, and deepened prayers. Each passing year carried hope, and though disappointment visited often, they never let it stay. When the doctor finally smiled and said, “You’re going to be parents,” her mother covered her mouth in disbelief, and her father stood silent—not because he felt nothing, but because happiness felt too fragile to touch. From that day, the house changed; the rooms felt warmer, and the future felt closer. Victoria grew inside her mother like a secret miracle, every movement and heartbeat bringing quiet joy. Her parents spoke to her even before she was born—telling her about the world, about love, and about how much space she already occupied in their hearts. The night she arrived was calm, with no storms or chaos, just soft lights and trembling hands. When her first cry echoed through the room, it was gentle—almost shy—yet it filled the space completely. Her mother wept as she held her, and her father smiled the kind of smile that comes only once in a lifetime. They named her Victoria, not because they wanted her to fight the world, but because her existence itself was their victory. As she grew, Victoria became a child full of brightness; she laughed easily and often, ran barefoot through the house, turning ordinary days into something lighter. She asked endless questions, played harmless pranks, and had a habit of hugging people suddenly, as if afraid love might escape if she waited too long. When her younger sister was born, Victoria took her role seriously—she guarded the crib, sang made-up songs, and proudly announced to anyone who would listen, “She’s mine.” The bond between them formed naturally—warm, protective, unbreakable. At night, Victoria loved sitting near the window, watching the moon rest quietly in the sky. She believed the moon listened, so she spoke to it in whispers—about school, her dreams, and the future she imagined so clearly. One day, she believed, she would fall in love—not the dramatic kind, but the gentle kind, the kind that stayed. She didn’t yet know that life would slowly test that belief—not cruelly or suddenly, but gently, the way growing always does. For now, she was only a child—laughing, dreaming, unaware that her story had just begun.`,
+        images: [
+          "episode images/e1.1.png",
+          "episode images/e1.2.png",
+          "episode images/e1.3.png",
+          "episode images/e1.4.png",
+          "episode images/e1.5.png",
+          "episode images/e1.6.png",
+          "episode images/e1.7.png",
+          "episode images/e1.8.png",
+          "episode images/e1.9.png",
+          "episode images/e1.10.png"
+        ]
+      };
+    } else {
+      // Short placeholder text for other episodes
+      return {
+        text: `Episode ${i+1} unlocks today! The story will be revealed here when unlocked. Stay tuned for more moments of Victoria's journey.`,
+        images: [
+          "episode images/placeholder.png" // Use one placeholder image for all other episodes
+        ]
+      };
+    }
+  });
+
+  // State
+  let selectedEpisodeIndex = 0;
+  let currentImageIndex = 0;
+  let musicPlaying = false;
+
+  // Elements
+  const episodeButtonsContainer = document.getElementById('episode-buttons');
+  const storyTextElem = document.getElementById('story-text');
+  const unlockInfoElem = document.getElementById('unlock-info');
+  const countdownTimerElem = document.getElementById('countdown-timer');
+  const storyBox = document.getElementById('story-box');
+  const storyImage = document.getElementById('story-image');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const musicToggleBtn = document.getElementById('music-toggle');
+  const musicAnim = document.getElementById('music-anim');
+  const soundcloudPlayer = document.getElementById('soundcloud-player');
+
+  // Format date to "Jan 22" style
+  function formatDate(d) {
+    const options = { month: 'short', day: 'numeric' };
+    return d.toLocaleDateString('en-US', options);
+  }
+
+  // Create episode buttons
+  episodeDates.forEach((date, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = `episode-${i}`;
+    btn.innerHTML = `Ep ${i+1}<br><span class="release-date">${formatDate(date)}</span>`;
+    btn.disabled = true; // default disabled, will enable if unlocked
+    btn.setAttribute('aria-label', `Episode ${i+1}, releases on ${formatDate(date)}`);
+    episodeButtonsContainer.appendChild(btn);
+  });
+
+  // Check how many episodes are unlocked based on days passed since startDate
+  function getUnlockedCount() {
+    const now = new Date();
+    if (now < startDate) return 0;
+    const diffMs = now - startDate;
+    const daysPassed = Math.floor(diffMs / (1000 * 60 * 60 * 24)); // days difference
+    return Math.min(daysPassed + 1, episodes.length);
+  }
+
+  // Update buttons enabled/disabled state
+  function updateEpisodeButtons() {
+    const unlockedCount = getUnlockedCount();
+    for(let i=0; i<episodes.length; i++) {
+      const btn = document.getElementById(`episode-${i}`);
+      if(i < unlockedCount) {
+        btn.disabled = false;
+        btn.setAttribute('aria-disabled', 'false');
+      } else {
+        btn.disabled = true;
+        btn.setAttribute('aria-disabled', 'true');
+      }
+      // Highlight selected
+      if(i === selectedEpisodeIndex) {
+        btn.classList.add('selected');
+      } else {
+        btn.classList.remove('selected');
+      }
+    }
+  }
+
+  // Update story text and images based on selected episode
+  function updateStoryContent() {
+    const unlockedCount = getUnlockedCount();
+    const ep = episodes[selectedEpisodeIndex];
+    if(selectedEpisodeIndex < unlockedCount) {
+      // Episode unlocked - show story
+      storyBox.classList.remove('locked');
+      storyTextElem.textContent = ep.text;
+      unlockInfoElem.textContent = '';
+      countdownTimerElem.textContent = '';
+      currentImageIndex = 0;
+      updateImage();
+      updateNavButtons();
+    } else {
+      // Locked episode
+      storyBox.classList.add('locked');
+      storyTextElem.textContent = `This episode will unlock on ${formatDate(episodeDates[selectedEpisodeIndex])}. Please wait patiently for the story to continue.`;
+      unlockInfoElem.textContent = '';
+      countdownTimerElem.textContent = '';
+      storyImage.src = '';
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+    }
+  }
+
+  // Update image displayed
+  function updateImage() {
+    const ep = episodes[selectedEpisodeIndex];
+    if(ep.images && ep.images.length > 0) {
+      storyImage.src = ep.images[currentImageIndex];
+      storyImage.alt = `Illustration ${currentImageIndex + 1} of episode ${selectedEpisodeIndex + 1}`;
+    } else {
+      storyImage.src = '';
+      storyImage.alt = '';
+    }
+  }
+
+  // Update prev/next buttons status
+  function updateNavButtons() {
+    const ep = episodes[selectedEpisodeIndex];
+    prevBtn.disabled = currentImageIndex <= 0;
+    nextBtn.disabled = currentImageIndex >= ep.images.length - 1;
+  }
+
+  // Change episode when button clicked
+  episodeButtonsContainer.addEventListener('click', e => {
+    if(e.target.tagName === 'BUTTON' && !e.target.disabled) {
+      const index = Array.from(episodeButtonsContainer.children).indexOf(e.target);
+      if(index !== -1) {
+        selectedEpisodeIndex = index;
+        currentImageIndex = 0;
+        updateEpisodeButtons();
+        updateStoryContent();
+      }
+    }
+  });
+
+  // Nav buttons click
+  prevBtn.addEventListener('click', () => {
+    if(currentImageIndex > 0) {
+      currentImageIndex--;
+      updateImage();
+      updateNavButtons();
+    }
+  });
+  nextBtn.addEventListener('click', () => {
+    const ep = episodes[selectedEpisodeIndex];
+    if(currentImageIndex < ep.images.length - 1) {
+      currentImageIndex++;
+      updateImage();
+      updateNavButtons();
+    }
+  });
+
+  // Countdown timer for next episode unlock
+  function updateCountdown() {
+    const now = new Date();
+    const unlockedCount = getUnlockedCount();
+
+    if(unlockedCount >= episodes.length) {
+      countdownTimerElem.textContent = 'All episodes unlocked! Enjoy the story.';
+      unlockInfoElem.textContent = '';
+      return;
+    }
+
+    // Next episode date
+    const nextUnlockDate = episodeDates[unlockedCount];
+    const diffMs = nextUnlockDate - now;
+
+    if(diffMs <= 0) {
+      // Unlock updated, refresh buttons
+      updateEpisodeButtons();
+      updateStoryContent();
+      unlockInfoElem.textContent = '';
+      countdownTimerElem.textContent = '';
+      return;
+    }
+
+    // Show countdown: days, hours, minutes, seconds
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+    unlockInfoElem.textContent = `Next episode unlocks on ${formatDate(nextUnlockDate)}`;
+    countdownTimerElem.textContent = `Time remaining: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  // Music play toggle
+  musicToggleBtn.addEventListener('click', () => {
+    if(musicPlaying) {
+      soundcloudPlayer.contentWindow.postMessage('{"method":"pause"}', '*');
+      musicPlaying = false;
+      musicToggleBtn.innerHTML = '▶️ Play Music <span id="music-anim" style="opacity:0;"></span>';
+    } else {
+      soundcloudPlayer.contentWindow.postMessage('{"method":"play"}', '*');
+      musicPlaying = true;
+      musicToggleBtn.innerHTML = '⏸️ Pause Music <span id="music-anim" style="opacity:1;">' + musicAnim.innerHTML + '</span>';
+    }
+  });
+
+  // Floating hearts animation - randomly spawn hearts
+  function createHeart() {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = Math.random() * window.innerWidth + 'px';
+    heart.style.animationDuration = (4 + Math.random() * 4) + 's';
+    heart.style.opacity = (0.4 + Math.random() * 0.5).toFixed(2);
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+      heart.remove();
+    }, 8000);
+  }
+  setInterval(createHeart, 600);
+
+  // Initialization
+  function init() {
+    updateEpisodeButtons();
+    updateStoryContent();
+    updateCountdown();
+    setInterval(() => {
+      updateCountdown();
+    }, 1000);
+  }
+
+  window.onload = init;
+</script>
+</body>
+</html>
