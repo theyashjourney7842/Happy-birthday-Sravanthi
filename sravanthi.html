@@ -400,8 +400,8 @@
 <script>
   // Episode date range from Jan 22, 2026 to Mar 13, 2026 (51 days)
   const startDate = new Date(2026, 0, 22);
-  const endDate = new Date(2026, 2, 13);
-  const birthdayDate = new Date(2026, 0, 22);
+  const endDate = new Date(2026, 4, 13);
+  const birthdayDate = new Date(2026, 4, 13);
 
   // Generate all dates between start and end inclusive
   function getDatesArray(start, end) {
@@ -480,13 +480,18 @@
   });
 
   // Check how many episodes are unlocked based on days passed since startDate
-  function getUnlockedCount() {
-    const now = new Date();
-    if (now < startDate) return 0;
-    const diffMs = now - startDate;
-    const daysPassed = Math.floor(diffMs / (1000 * 60 * 60 * 24)); // days difference
-    return Math.min(daysPassed + 1, episodes.length);
+ function getUnlockedCount() {
+  const now = new Date();
+
+  let count = 0;
+  for (let i = 0; i < episodeDates.length; i++) {
+    if (now >= episodeDates[i]) {
+      count++;
+    }
   }
+  return count;
+}
+
 
   // Update buttons enabled/disabled state
   function updateEpisodeButtons() {
@@ -646,14 +651,21 @@
   setInterval(createHeart, 600);
 
   // Initialization
-  function init() {
-    updateEpisodeButtons();
-    updateStoryContent();
+ function init() {
+  updateEpisodeButtons();
+
+  // ✅ CHANGE 2 (ADD THESE LINES)
+  selectedEpisodeIndex = getUnlockedCount() - 1;
+  if (selectedEpisodeIndex < 0) selectedEpisodeIndex = 0;
+
+  updateStoryContent();
+  updateCountdown();
+
+  setInterval(() => {
     updateCountdown();
-    setInterval(() => {
-      updateCountdown();
-    }, 1000);
-  }
+  }, 1000);
+}
+
 
   window.onload = init;
 </script>
